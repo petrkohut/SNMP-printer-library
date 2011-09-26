@@ -4,7 +4,7 @@
  * Class for getting information by SNMP protocol
  * This class has dependency on PHP extension "php_snmp.dll"
  *
- * @version    v0.10    2011-07-13
+ * @version    v0.11    2011-08-31
  * @author     Petr Kohut <me@petrkohut.cz>    -    http://www.petrkohut.cz
  * @category   Kohut
  * @package    Kohut_SNMP
@@ -88,6 +88,16 @@ abstract class Kohut_SNMP_Abstract
 
         $this->ip = $ip;
     }
+    
+    /**
+     * Function gets IP address
+     *
+     * @return string
+     */
+    public function getIPAddress()
+    {
+        return $this->ip;
+    }
 
     /**
      * Function sets maximum timeout in microseconds for SNMP calls
@@ -106,6 +116,16 @@ abstract class Kohut_SNMP_Abstract
         }
 
         $this->maxTimeout = $microseconds;
+    }
+    
+    /**
+     * Function gets maxTimeout
+     *
+     * @return int Microseconds
+     */
+    public function getMaxTimeout()
+    {
+        return $this->maxTimeout;
     }
 
     /**
@@ -169,27 +189,7 @@ abstract class Kohut_SNMP_Abstract
     }
 
     /**
-     * Function deletes quotation marks chars from string returned by SNMP
-     *
-     * @param string $snmpString
-     * @return string
-     * @throws Exception if $snmpString is not in string format
-     */
-    protected function parseSNMPString($snmpString)
-    {
-        /**
-         * Check if snmpString is string
-         */
-        if (!is_string($snmpString)) {
-            require_once 'Kohut/SNMP/Exception.php';
-            throw new Kohut_SNMP_Exception('Passed snmpString value is not string.');
-        }
-
-        return str_replace('"', '', $snmpString);
-    }
-
-    /**
-     * Function gets parsed string result of SNMP object id,
+     * Function gets result of SNMP object id with deleted quotation marks,
      * or returns false if call failed
      *
      * @param string $snmpObjectId
@@ -199,7 +199,7 @@ abstract class Kohut_SNMP_Abstract
     {
         $result = $this->get($snmpObjectId);
 
-        return ($result !== false) ? $this->parseSNMPString($result) : false;
+        return ($result !== false) ? str_replace('"', '', $result) : false;
     }
 
 }

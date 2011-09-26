@@ -9,7 +9,7 @@
  * Class for getting information about printer by SNMP protocol
  * This class has dependency on PHP extension "php_snmp.dll"
  *
- * @version    v0.10    2011-07-13
+ * @version    v0.11    2011-08-31
  * @author     Petr Kohut <me@petrkohut.cz>    -    http://www.petrkohut.cz
  * @category   Kohut
  * @package    Kohut_SNMP
@@ -20,11 +20,6 @@ class Kohut_SNMP_Printer extends Kohut_SNMP_Abstract
 {
 
     /**
-     * @var string Type of Printer (PRINTER_TYPE_MONO or PRINTER_TYPE_COLOR)
-     */
-    protected $type;
-
-    /**
      * Printer types
      */
     const PRINTER_TYPE_MONO  = 'mono printer';
@@ -33,10 +28,10 @@ class Kohut_SNMP_Printer extends Kohut_SNMP_Abstract
     /**
      * Printer colors
      */
-    const COLOR_CYAN    = 'cyan';
-    const COLOR_MAGENTA = 'magenta';
-    const COLOR_YELLOW  = 'yellow';
-    const COLOR_BLACK   = 'black';
+    const CARTRIDGE_COLOR_CYAN    = 'cyan';
+    const CARTRIDGE_COLOR_MAGENTA = 'magenta';
+    const CARTRIDGE_COLOR_YELLOW  = 'yellow';
+    const CARTRIDGE_COLOR_BLACK   = 'black';
 
     /**
      * SNMP MARKER_SUPPLIES possible results
@@ -80,17 +75,17 @@ class Kohut_SNMP_Printer extends Kohut_SNMP_Abstract
     const SNMP_CARTRIDGE_COLOR_SLOT_4                 = '.1.3.6.1.2.1.43.12.1.1.4.1.4';
 
     /**
-     * Function detects and return what type of printer we are working with,
-     * or returns null if error
+     * Function gets and return what type of printer we are working with,
+     * or returns false if error occurred
      *
      * @return string Type of printer (PRINTER_TYPE_MONO|PRINTER_TYPE_COLOR)
      */
-    protected function detectTypeOfPrinter()
+    public function getTypeOfPrinter()
     {
-        $colorCartridgeSlot1 = $this->get(self::SNMP_CARTRIDGE_COLOR_SLOT_1);
+        $colorCartridgeSlot1 = $this->getSNMPString(self::SNMP_CARTRIDGE_COLOR_SLOT_1);
         if ($colorCartridgeSlot1 !== false) {
 
-            if (strtolower($this->parseSNMPString($colorCartridgeSlot1)) === self::COLOR_CYAN) {
+            if (strtolower($colorCartridgeSlot1) === self::CARTRIDGE_COLOR_CYAN) {
 
                 /**
                  * We found CYAN color catridge in slot1 so it is color printer
@@ -105,7 +100,7 @@ class Kohut_SNMP_Printer extends Kohut_SNMP_Abstract
             }
         }
 
-        return null;
+        return false;
     }
 
     /**
@@ -115,11 +110,12 @@ class Kohut_SNMP_Printer extends Kohut_SNMP_Abstract
      */
     public function isColorPrinter()
     {
-        if ($this->type === null) {
-            $this->type = $this->detectTypeOfPrinter();
+        $type = $this->getTypeOfPrinter();
+        if ($type !== false) {
+            return ($type === self::PRINTER_TYPE_COLOR) ? true : false;
+        } else {
+            return false;
         }
-
-        return ($this->type === self::PRINTER_TYPE_COLOR) ? true : false;
     }
 
     /**
@@ -129,11 +125,12 @@ class Kohut_SNMP_Printer extends Kohut_SNMP_Abstract
      */
     public function isMonoPrinter()
     {
-        if ($this->type === null) {
-            $this->type = $this->detectTypeOfPrinter();
+        $type = $this->getTypeOfPrinter();
+        if ($type !== false) {
+            return ($type === self::PRINTER_TYPE_MONO) ? true : false;
+        } else {
+            return false;
         }
-
-        return ($this->type === self::PRINTER_TYPE_MONO) ? true : false;
     }
 
     /**
@@ -385,7 +382,7 @@ class Kohut_SNMP_Printer extends Kohut_SNMP_Abstract
         $actualValues = $this->walk(self::SNMP_MARKER_SUPPLIES_ACTUAL_CAPACITY_SLOTS);
 
         for ($i = 0; $i < sizeOf($names); $i++) {
-            $resultData[] = array('name'            => $this->parseSNMPString($names[$i])
+            $resultData[] = array('name'            => str_replace('"', '', $names[$i])
                                  ,'maxValue'        => $maxValues[$i]
                                  ,'actualValue'     => $actualValues[$i]
                                  ,'percentageLevel' => ((int)$actualValues[$i] >= 0) ? ($actualValues[$i] / ($maxValues[$i] / 100)) : null);

@@ -3,7 +3,7 @@
 /**
  * SNMP Exception class
  *
- * @version    v0.10    2011-07-13
+ * @version    v0.11    2011-08-31
  * @author     Petr Kohut <me@petrkohut.cz>    -    http://www.petrkohut.cz
  * @category   Kohut
  * @package    Kohut_SNMP
