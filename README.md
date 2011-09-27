@@ -1,4 +1,3 @@
-PHP classes for getting information about printer by SNMP protocol
+Zend libraries
 ==============
-
-
+Various Zend libraries
