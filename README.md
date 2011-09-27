@@ -1,10 +1,4 @@
-Zend libraries
+PHP classes for getting information about printer by SNMP protocol
 ==============
 
-Various Zend libraries
 
-
-TODO list
-==============
-
-- Check and validate documentation in code
