@@ -1,3 +1,3 @@
-Zend libraries
+PHP library for getting printer's data in a network through the SNMP protocol
 ==============
-Various Zend libraries
+Used Zend Framework coding standards
