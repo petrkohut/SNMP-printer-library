@@ -82,7 +82,7 @@ class Kohut_SNMP_Printer extends Kohut_SNMP_Abstract
      */
     public function getTypeOfPrinter()
     {
-        $colorCartridgeSlot1 = $this->getSNMPString(self::SNMP_CARTRIDGE_COLOR_SLOT_1);
+        $colorCartridgeSlot1 = $this->getSNMPString(self::SNMP_CARTRIDGE_COLOR_SLOT_2);
         if ($colorCartridgeSlot1 !== false) {
 
             if (strtolower($colorCartridgeSlot1) === self::CARTRIDGE_COLOR_CYAN) {
