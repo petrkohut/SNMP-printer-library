@@ -154,8 +154,15 @@ abstract class Kohut_SNMP_Abstract
             require_once 'Kohut/SNMP/Exception.php';
             throw new Kohut_SNMP_Exception('SNMP Object ID is not string.');
         }
+        
+        $result =  @snmpget($this->ip, 'public', $snmpObjectId, $this->maxTimeout);
+        
+        /*
+         * Check if SNMP result is clean value
+         */
+        if(strpos($result,':') != -1) $result = trim(substr($result,strpos($result,':')+2, strlen($result)));
 
-        return @snmpget($this->ip, 'public', $snmpObjectId, $this->maxTimeout);
+        return $result;
     }
 
     /**
